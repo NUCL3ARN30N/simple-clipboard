@@ -20,6 +20,48 @@
   border-left: 1px solid var(--md-outline-variant);
 }
 .app.pinned-left .pinned { border-left: 0; border-right: 1px solid var(--md-outline-variant); }
+.pinned-body { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+/* Collapsed pinned palette: a slim rail that expands on click. */
+.rail { display: none; }
+.app.pinned-collapsed .pinned { flex: 0 0 48px; }
+.app.pinned-collapsed .pinned-body { display: none; }
+.app.pinned-collapsed .rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  padding: 14px 0;
+  border: 0;
+  background: transparent;
+  color: var(--md-on-surface-variant);
+  cursor: pointer;
+}
+.rail > * { pointer-events: none; }
+.rail-chevron { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--md-secondary-container); color: var(--md-on-surface); }
+.rail .icon { color: var(--md-primary); }
+.rail-count {
+  min-width: 22px;
+  padding: 0 6px;
+  border-radius: 11px;
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 20px;
+  text-align: center;
+}
+.rail-count:empty { display: none; }
+.rail-label {
+  writing-mode: vertical-rl;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.app.pinned-left .rail-label { transform: rotate(180deg); }
 
 /* Drag areas: children (except controls) must not swallow the mousedown. */
 [data-tauri-drag-region] > :not(button):not(label):not(input) { pointer-events: none; }

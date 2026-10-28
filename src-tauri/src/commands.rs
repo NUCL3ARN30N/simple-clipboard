@@ -221,6 +221,7 @@ fn apply_settings(app: &AppHandle, state: &AppState, settings: Settings) -> Resu
     let old = state.data.lock().unwrap().settings.clone();
     // The UI may hold a stale copy; the dragged position is owned by the backend.
     settings.popup_position = if settings.remember_position { old.popup_position } else { None };
+    settings.pinned_collapsed = old.pinned_collapsed;
 
     let mut error = None;
     if settings.hotkey != old.hotkey {
@@ -367,6 +368,11 @@ pub async fn check_updates() -> Result<UpdateInfo, String> {
     tauri::async_runtime::spawn_blocking(updates::check)
         .await
         .map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+pub fn set_pinned_collapsed(app: AppHandle, collapsed: bool) {
+    popup::set_pinned_collapsed(&app, collapsed);
 }
 
 #[tauri::command]

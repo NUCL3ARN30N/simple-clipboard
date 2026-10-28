@@ -26,6 +26,7 @@ const els = {
 };
 
 const pinnedEnabled = () => state.settings?.pinned_enabled;
+const pinnedOpen = () => pinnedEnabled() && !state.settings.pinned_collapsed;
 
 function lists() {
   const history = pinnedEnabled() ? state.entries.filter((e) => !e.pinned) : state.entries;
@@ -99,7 +100,8 @@ function render() {
     const len = (panel === "history" ? history : pinned).length;
     state.index[panel] = Math.min(state.index[panel], Math.max(0, len - 1));
   }
-  if (!pinnedEnabled()) state.panel = "history";
+  if (!pinnedOpen()) state.panel = "history";
+  $("pinned-count").textContent = state.entries.some((e) => e.pinned) ? String(state.entries.filter((e) => e.pinned).length) : "";
 
   els.historyList.replaceChildren(...history.map((e, i) => renderItem(e, i, "history")));
   els.pinnedList.replaceChildren(...pinned.map((e, i) => renderItem(e, i, "pinned")));
@@ -153,8 +155,32 @@ async function loadSettings(settings) {
   applyTheme(state.settings);
   els.app.classList.toggle("no-pinned", !state.settings.pinned_enabled);
   els.app.classList.toggle("pinned-left", state.settings.pinned_side === "left");
+  applyCollapsed();
   if (state.tagFilter && !tagById(state.tagFilter)) state.tagFilter = null;
 }
+
+// Pinned palette collapse (state is remembered by the backend)
+function applyCollapsed() {
+  const collapsed = !!state.settings.pinned_collapsed;
+  const left = state.settings.pinned_side === "left";
+  els.app.classList.toggle("pinned-collapsed", collapsed);
+  // Chevrons point in the direction the palette moves.
+  $("rail-chevron").innerHTML = icon(left ? "chevronRight" : "chevronLeft");
+  $("collapse-pinned").innerHTML = icon(left ? "chevronLeft" : "chevronRight");
+}
+
+function setPinnedCollapsed(collapsed) {
+  if (!collapsed && !pinnedEnabled()) return;
+  state.settings.pinned_collapsed = collapsed;
+  if (collapsed) state.panel = "history";
+  closeTagMenu();
+  applyCollapsed();
+  render();
+  invoke("set_pinned_collapsed", { collapsed });
+}
+
+$("pinned-rail").addEventListener("click", () => setPinnedCollapsed(false));
+$("collapse-pinned").addEventListener("click", () => setPinnedCollapsed(true));
 
 // Actions
 async function paste(entry) {
@@ -295,10 +321,16 @@ document.addEventListener("keydown", (ev) => {
       const next = (state.index[state.panel] + delta + list.length) % list.length;
       return select(state.panel, next);
     }
-    case "Tab":
+    case "Tab": {
       ev.preventDefault();
-      if (pinnedEnabled()) select(state.panel === "history" ? "pinned" : "history", state.index[state.panel === "history" ? "pinned" : "history"]);
-      return;
+      if (!pinnedEnabled()) return;
+      if (state.settings.pinned_collapsed) {
+        setPinnedCollapsed(false);
+        return select("pinned", state.index.pinned);
+      }
+      const other = state.panel === "history" ? "pinned" : "history";
+      return select(other, state.index[other]);
+    }
     case "Enter":
       ev.preventDefault();
       return paste(currentEntry());

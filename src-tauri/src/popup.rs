@@ -11,10 +11,15 @@ use std::{
 
 use tauri::{AppHandle, Emitter, LogicalSize, Manager, PhysicalPosition, WebviewWindow};
 
-use crate::{platform, store::AppState};
+use crate::{
+    platform,
+    store::{AppState, Settings},
+};
 
 const WIDTH: f64 = 380.0;
 const PINNED_WIDTH: f64 = 300.0;
+/// Width of the pinned palette when collapsed to a rail.
+const RAIL_WIDTH: f64 = 48.0;
 const HEIGHT: f64 = 540.0;
 const MARGIN: f64 = 12.0;
 
@@ -40,13 +45,12 @@ pub fn show(app: &AppHandle) {
     if !w.is_visible().unwrap_or(false) {
         platform::remember_foreground();
     }
-    let (pinned, saved) = {
+    let (width, saved) = {
         let state = app.state::<AppState>();
         let data = state.data.lock().unwrap();
         let s = &data.settings;
-        (s.pinned_enabled, s.popup_position.filter(|_| s.remember_position))
+        (popup_width(s), s.popup_position.filter(|_| s.remember_position))
     };
-    let width = if pinned { WIDTH + PINNED_WIDTH } else { WIDTH };
 
     *SHOWN_AT.lock().unwrap() = Some(Instant::now());
     let _ = w.set_size(LogicalSize::new(width, HEIGHT));
@@ -60,6 +64,38 @@ pub fn show(app: &AppHandle) {
     let _ = w.unminimize();
     let _ = w.set_focus();
     let _ = w.emit("popup-shown", ());
+}
+
+fn popup_width(s: &Settings) -> f64 {
+    match (s.pinned_enabled, s.pinned_collapsed) {
+        (false, _) => WIDTH,
+        (true, true) => WIDTH + RAIL_WIDTH,
+        (true, false) => WIDTH + PINNED_WIDTH,
+    }
+}
+
+/// Collapses or expands the pinned palette, resizing the open popup so the
+/// history column stays where it is.
+pub fn set_pinned_collapsed(app: &AppHandle, collapsed: bool) {
+    let settings = {
+        let state = app.state::<AppState>();
+        let mut data = state.data.lock().unwrap();
+        data.settings.pinned_collapsed = collapsed;
+        state.save_settings(&data);
+        data.settings.clone()
+    };
+    if let Some(w) = window(app) {
+        let width = popup_width(&settings);
+        let scale = w.scale_factor().unwrap_or(1.0);
+        if let (Ok(pos), Ok(size)) = (w.outer_position(), w.outer_size()) {
+            let _ = w.set_size(LogicalSize::new(width, HEIGHT));
+            if settings.pinned_side == "left" {
+                let delta = size.width as i32 - (width * scale).round() as i32;
+                let _ = w.set_position(PhysicalPosition::new(pos.x + delta, pos.y));
+            }
+        }
+    }
+    let _ = app.emit("settings-changed", &settings);
 }
 
 pub fn hide(app: &AppHandle) {

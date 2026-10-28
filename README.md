@@ -7,7 +7,7 @@ On Windows it replaces the built-in <kbd>Win</kbd> + <kbd>V</kbd> clipboard hist
 
 - **Win + V replacement**: a low-level keyboard hook handles Win+V. If Windows still opens its own clipboard history as well, click *Settings → Shortcut → Disable Windows Win + V*. This adds `V` to `HKCU\…\Explorer\Advanced\DisabledHotkeys` and restarts Explorer. *Restore Windows default* undoes it, and so does the NSIS uninstaller.
 - **Text and picture history**, with a configurable size. Pictures can be turned off.
-- **Pinned palette**: an optional extra column (left or right) for items you paste often. Pinned items are never trimmed.
+- **Pinned palette**: an optional extra column (left or right) for items you paste often. Pinned items are never trimmed. The palette folds into a slim rail and remembers whether it was open or collapsed.
 - **Colored tags** for pinned items, with tag filter chips in the palette.
 - **Search** across all text and tag names.
 - **Auto paste**: picking an item pastes it into the app you were using.
@@ -24,7 +24,7 @@ On Windows it replaces the built-in <kbd>Win</kbd> + <kbd>V</kbd> clipboard hist
 | <kbd>↑</kbd> <kbd>↓</kbd> | Select |
 | <kbd>Enter</kbd> | Paste selected item |
 | <kbd>Ctrl</kbd> + <kbd>1</kbd>…<kbd>9</kbd> | Paste item by number |
-| <kbd>Tab</kbd> | Switch between history and pinned palette |
+| <kbd>Tab</kbd> | Switch between history and pinned palette (expands it if collapsed) |
 | <kbd>Ctrl</kbd> + <kbd>P</kbd> | Pin / unpin |
 | <kbd>Del</kbd> | Delete item |
 | <kbd>Esc</kbd> | Clear search / close |

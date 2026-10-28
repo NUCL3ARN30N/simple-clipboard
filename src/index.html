@@ -38,18 +38,27 @@
       </section>
 
       <aside class="panel pinned" id="pinned-panel">
+        <button class="rail stateful" id="pinned-rail" title="Show pinned items">
+          <span class="rail-chevron" id="rail-chevron"></span>
+          <span data-icon="pin"></span>
+          <span class="rail-count" id="pinned-count"></span>
+          <span class="rail-label">Pinned</span>
+        </button>
+        <div class="pinned-body">
         <div class="drag-handle" data-tauri-drag-region title="Drag to move"></div>
         <header class="pinned-head" data-tauri-drag-region>
           <span data-icon="pin"></span>
           <span>Pinned</span>
           <span class="spacer"></span>
           <button class="icon-btn small stateful" id="manage-tags" title="Manage tags" data-icon="label"></button>
+          <button class="icon-btn small stateful" id="collapse-pinned" title="Hide pinned items"></button>
         </header>
         <div class="tag-filter" id="tag-filter"></div>
         <ul class="list" id="pinned-list"></ul>
         <div class="empty" id="pinned-empty" hidden>
           <span data-icon="pin"></span>
           <p>Pin items you paste often. They are kept forever.</p>
+        </div>
         </div>
       </aside>
     </div>

@@ -58,6 +58,8 @@ pub struct Settings {
     pub pinned_enabled: bool,
     /// "left" or "right"
     pub pinned_side: String,
+    /// Pinned palette folded to a narrow rail; toggled from the popup and remembered.
+    pub pinned_collapsed: bool,
     /// Global shortcut. "Super+V" on Windows replaces the native clipboard history.
     pub hotkey: String,
     pub auto_paste: bool,
@@ -80,6 +82,7 @@ impl Default for Settings {
             images_enabled: true,
             pinned_enabled: true,
             pinned_side: "right".into(),
+            pinned_collapsed: false,
             hotkey: "Super+V".into(),
             auto_paste: true,
             launch_at_startup: true,

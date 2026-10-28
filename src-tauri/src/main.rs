@@ -89,6 +89,7 @@ fn main() {
             commands::import_settings,
             commands::check_updates,
             commands::reset_popup_position,
+            commands::set_pinned_collapsed,
             commands::native_win_v_disabled,
             commands::set_native_win_v_disabled,
             commands::open_url,
