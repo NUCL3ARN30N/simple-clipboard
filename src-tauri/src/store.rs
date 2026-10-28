@@ -223,12 +223,16 @@ impl AppState {
 
 /// Uses `<exe dir>/data` when a `portable` marker file sits next to the executable.
 pub fn data_dir(app: &AppHandle) -> PathBuf {
-    if let Some(exe_dir) = std::env::current_exe().ok().and_then(|p| p.parent().map(Path::to_path_buf)) {
-        if exe_dir.join("portable").exists() || exe_dir.join(".portable").exists() {
-            return exe_dir.join("data");
-        }
+    if let Some(dir) = portable_dir() {
+        return dir.join("data");
     }
     app.path().app_data_dir().unwrap_or_else(|_| PathBuf::from("data"))
+}
+
+/// The executable's folder when it contains a `portable` marker file.
+pub fn portable_dir() -> Option<PathBuf> {
+    let exe_dir = std::env::current_exe().ok()?.parent()?.to_path_buf();
+    (exe_dir.join("portable").exists() || exe_dir.join(".portable").exists()).then_some(exe_dir)
 }
 
 fn read_json<T: DeserializeOwned>(path: &Path) -> Option<T> {

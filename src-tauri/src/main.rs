@@ -35,6 +35,8 @@ fn main() {
             let state = AppState::load(store::data_dir(&handle));
             let settings = state.data.lock().unwrap().settings.clone();
             app.manage(state);
+            app.manage(updates::PendingUpdate::default());
+            updates::cleanup();
 
             tray::create(&handle)?;
 
@@ -88,6 +90,8 @@ fn main() {
             commands::export_settings,
             commands::import_settings,
             commands::check_updates,
+            commands::pending_update,
+            commands::install_update,
             commands::reset_popup_position,
             commands::set_pinned_collapsed,
             commands::native_win_v_disabled,

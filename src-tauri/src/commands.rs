@@ -10,7 +10,7 @@ use tauri_plugin_dialog::DialogExt;
 use tauri_plugin_opener::OpenerExt;
 
 use crate::{
-    clipboard, hotkey, platform, popup,
+    clipboard, hotkey, platform, popup, tray,
     store::{now_ms, AppState, Entry, Kind, Settings},
     updates::{self, UpdateInfo},
 };
@@ -364,8 +364,26 @@ pub async fn import_settings(app: AppHandle, state: State<'_, AppState>) -> Resu
 }
 
 #[tauri::command]
-pub async fn check_updates() -> Result<UpdateInfo, String> {
-    tauri::async_runtime::spawn_blocking(updates::check)
+pub async fn check_updates(app: AppHandle) -> Result<UpdateInfo, String> {
+    let handle = app.clone();
+    let info = tauri::async_runtime::spawn_blocking(move || updates::check_and_store(&handle))
+        .await
+        .map_err(|e| e.to_string())??;
+    if info.available {
+        tray::show_update(&app, &info.latest);
+    }
+    Ok(info)
+}
+
+#[tauri::command]
+pub fn pending_update(pending: State<'_, updates::PendingUpdate>) -> Option<UpdateInfo> {
+    pending.0.lock().unwrap().clone()
+}
+
+/// Downloads and installs the latest release; the app exits when the installer starts.
+#[tauri::command]
+pub async fn install_update(app: AppHandle) -> Result<(), String> {
+    tauri::async_runtime::spawn_blocking(move || updates::install(&app))
         .await
         .map_err(|e| e.to_string())?
 }

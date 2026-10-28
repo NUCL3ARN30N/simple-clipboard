@@ -98,3 +98,20 @@ body { background: var(--md-surface-container-low); }
 .tags .color input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
 .tags .field { flex: 1; min-width: 0; }
 .tags .empty { color: var(--md-on-surface-variant); padding: 8px 0; font-size: 13px; }
+
+.update-progress { display: flex; align-items: center; gap: 12px; padding: 4px 0 12px; font-size: 12.5px; color: var(--md-on-surface-variant); }
+.update-progress .bar { flex: 1; height: 4px; border-radius: 2px; background: var(--md-secondary-container); overflow: hidden; }
+.update-progress .fill { height: 100%; width: 0; background: var(--md-primary); border-radius: 2px; transition: width 150ms linear; }
+.update-progress.indeterminate .fill { width: 30%; animation: indeterminate 1.2s ease-in-out infinite; }
+@keyframes indeterminate { from { transform: translateX(-100%); } to { transform: translateX(340%); } }
+.release-notes {
+  max-height: 160px;
+  overflow: auto;
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-m);
+  background: var(--md-surface-container);
+  font: 12.5px/1.5 var(--font);
+  white-space: pre-wrap;
+  word-break: break-word;
+}

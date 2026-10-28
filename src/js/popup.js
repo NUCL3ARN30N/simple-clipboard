@@ -277,7 +277,18 @@ document.addEventListener("mousedown", (ev) => {
   }
 });
 
-$("open-settings").addEventListener("click", () => invoke("open_settings", { section: null }));
+// A dot on the settings button signals an available update.
+let updateAvailable = false;
+function setUpdateBadge(available) {
+  updateAvailable = available;
+  $("open-settings").classList.toggle("badge", available);
+  $("open-settings").title = available ? "Settings – update available" : "Settings";
+}
+listen("update-available", () => setUpdateBadge(true));
+
+$("open-settings").addEventListener("click", () =>
+  invoke("open_settings", { section: updateAvailable ? "updates" : null }),
+);
 $("manage-tags").addEventListener("click", () => invoke("open_settings", { section: "tags" }));
 $("clear-all").addEventListener("click", async () => {
   thumbs.clear();
@@ -382,6 +393,7 @@ window.addEventListener("focus", () => {
 
 (async function init() {
   hydrateIcons();
+  invoke("pending_update").then((u) => setUpdateBadge(!!u));
   await loadSettings();
   await reload();
 })();

@@ -129,10 +129,16 @@
         <div class="row">
           <div class="text"><div class="title" id="update-title">Simple Clipboard</div><div class="sub" id="update-status">Not checked yet</div></div>
           <div class="gap-row">
-            <button class="btn filled" id="open-release" hidden data-icon="open">Download</button>
+            <button class="btn text" id="open-release" hidden>Release notes</button>
+            <button class="btn filled" id="install-update" hidden data-icon="download">Install update</button>
             <button class="btn tonal" id="check-updates" data-icon="update">Check now</button>
           </div>
         </div>
+        <div class="update-progress" id="update-progress" hidden>
+          <div class="bar"><div class="fill" id="update-fill"></div></div>
+          <span id="update-progress-text"></span>
+        </div>
+        <pre class="release-notes" id="release-notes" hidden></pre>
         <p class="hint"><a href="#" id="repo-link">github.com/NUCL3ARN30N/simple-clipboard</a></p>
       </section>
     </div>

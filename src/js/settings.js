@@ -322,27 +322,92 @@ $("import").addEventListener("click", async () => {
   }
 });
 
+const INSTALL_HINTS = {
+  installer: "The installer opens and Simple Clipboard closes. Your history and settings are kept.",
+  msi: "The Windows installer opens and Simple Clipboard closes. Your history and settings are kept.",
+  portable: "The program file is replaced and Simple Clipboard restarts. Your history and settings are kept.",
+  deb: "You'll be asked for your password to install the package. Simple Clipboard restarts afterwards.",
+};
+let installing = false;
+
+function showUpdate(r) {
+  latestRelease = r.available ? r : null;
+  $("update-title").textContent = r.available ? `Version ${r.latest} is available` : "You're up to date";
+  const canInstall = r.available && r.asset && INSTALL_HINTS[r.install_kind];
+  $("update-status").textContent = !r.available
+    ? `Version ${r.current} is the latest release`
+    : canInstall
+      ? `You have ${r.current}. ${INSTALL_HINTS[r.install_kind]}`
+      : `You have ${r.current}. Download the new version from the release page.`;
+  $("install-update").hidden = !canInstall;
+  $("open-release").hidden = !r.available;
+  $("open-release").textContent = canInstall ? "Release notes" : "Open release page";
+  const notes = (r.notes || "").trim();
+  $("release-notes").hidden = !r.available || !notes;
+  $("release-notes").textContent = notes;
+}
+
 async function checkUpdates() {
-  const status = $("update-status");
+  if (installing) return;
   const btn = $("check-updates");
   btn.disabled = true;
-  status.textContent = "Checking…";
+  $("update-status").textContent = "Checking…";
   try {
-    const r = await invoke("check_updates");
-    latestRelease = r.available ? r.url : null;
-    $("update-title").textContent = r.available ? `Version ${r.latest} is available` : "You're up to date";
-    status.textContent = r.available ? `You have ${r.current}` : `Version ${r.current} is the latest release`;
+    showUpdate(await invoke("check_updates"));
   } catch (e) {
     latestRelease = null;
     $("update-title").textContent = "Couldn't check for updates";
-    status.textContent = String(e);
+    $("update-status").textContent = String(e);
+    $("install-update").hidden = $("open-release").hidden = $("release-notes").hidden = true;
   } finally {
     btn.disabled = false;
-    $("open-release").hidden = !latestRelease;
   }
 }
+
+function formatMb(bytes) {
+  return (bytes / 1048576).toFixed(1) + " MB";
+}
+
+listen("update-progress", (ev) => {
+  const p = ev.payload;
+  const box = $("update-progress");
+  box.hidden = false;
+  if (p.installing) {
+    box.classList.add("indeterminate");
+    $("update-fill").style.width = "";
+    $("update-progress-text").textContent = "Starting installer…";
+    return;
+  }
+  box.classList.toggle("indeterminate", !p.total);
+  $("update-fill").style.width = p.total ? `${Math.min(100, (p.downloaded / p.total) * 100)}%` : "";
+  $("update-progress-text").textContent = p.total
+    ? `${formatMb(p.downloaded)} of ${formatMb(p.total)}`
+    : formatMb(p.downloaded);
+});
+
+$("install-update").addEventListener("click", async () => {
+  installing = true;
+  for (const id of ["install-update", "check-updates"]) $(id).disabled = true;
+  $("update-title").textContent = `Updating to ${latestRelease.latest}…`;
+  $("update-status").textContent = "Downloading…";
+  $("update-progress").hidden = false;
+  $("update-progress").classList.add("indeterminate");
+  $("update-progress-text").textContent = "";
+  try {
+    await invoke("install_update");
+    // The app exits on success; this is only reached if it didn't.
+  } catch (e) {
+    $("update-title").textContent = "Update failed";
+    $("update-status").textContent = String(e);
+    $("update-progress").hidden = true;
+  } finally {
+    installing = false;
+    for (const id of ["install-update", "check-updates"]) $(id).disabled = false;
+  }
+});
+
 $("check-updates").addEventListener("click", checkUpdates);
-$("open-release").addEventListener("click", () => latestRelease && invoke("open_url", { url: latestRelease }));
+$("open-release").addEventListener("click", () => latestRelease && invoke("open_url", { url: latestRelease.url }));
 $("repo-link").addEventListener("click", (ev) => {
   ev.preventDefault();
   invoke("open_url", { url: info.repo });
@@ -375,6 +440,8 @@ darkQuery.addEventListener("change", () => settings && applyTheme(settings));
   ]);
   $("version").textContent = `v${info.version}`;
   $("update-title").textContent = `Simple Clipboard ${info.version}`;
+  const pending = await invoke("pending_update");
+  if (pending) showUpdate(pending);
   render();
   const hash = location.hash.slice(1);
   if (hash) setTimeout(() => goToSection(hash), 100);

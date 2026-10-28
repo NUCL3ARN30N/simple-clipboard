@@ -13,7 +13,7 @@ On Windows it replaces the built-in <kbd>Win</kbd> + <kbd>V</kbd> clipboard hist
 - **Auto paste**: picking an item pastes it into the app you were using.
 - **Material 3 UI** with light, dark and system themes and a choice of accent color.
 - **Export and import** of settings, tags and pinned text items as JSON.
-- **Update check** against GitHub releases, on startup or on demand.
+- **Updates**: checks GitHub releases on startup or on demand. *Install update* downloads the right file for your install type (setup.exe, MSI, portable zip or `.deb`) and verifies its SHA-256 checksum when GitHub provides one. Installed versions start the installer; the portable version replaces its exe and restarts.
 - Respects the `ExcludeClipboardContentFromMonitorProcessing` flag that password managers set.
 
 ## Keyboard

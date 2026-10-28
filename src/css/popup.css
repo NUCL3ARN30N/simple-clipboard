@@ -312,3 +312,17 @@ kbd {
 .menu button.on .check { visibility: visible; }
 .menu hr { border: 0; border-top: 1px solid var(--md-outline-variant); margin: 6px 0; }
 .menu .muted { color: var(--md-on-surface-variant); }
+
+/* Update available indicator on the settings button */
+.icon-btn.badge { position: relative; overflow: visible; }
+.icon-btn.badge::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--md-error);
+  box-shadow: 0 0 0 2px var(--md-surface);
+}

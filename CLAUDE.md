@@ -29,3 +29,4 @@ Simple Clipboard is a clipboard history manager built with Tauri 2. The Rust bac
 - Starting an OS window drag sends a spurious blur event on Windows. `popup::on_blur` checks the foreground window before hiding.
 - Hiding Windows' own Win+V uses the `DisabledHotkeys` value under `HKCU\…\Explorer\Advanced` and needs an Explorer restart. The NSIS uninstall hook restores it.
 - CSS: `[hidden]` is forced to `display: none !important` in `theme.css`. Keep it, because components set their own `display`.
+- The in-app updater picks release assets by suffix (`-setup.exe`, `.msi`, `_portable.zip`, `_amd64.deb`; see `InstallKind::asset_suffix`). Keep these in sync with the file names in `build.yml`.
