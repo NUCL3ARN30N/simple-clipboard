@@ -1,0 +1,248 @@
+/* Material Design 3 tokens. The accent (--md-primary) is set at runtime from settings. */
+:root {
+  --accent: #6750a4;
+  color-scheme: light;
+  --md-primary: var(--accent);
+  --md-on-primary: #ffffff;
+  --md-surface-base: #fef7ff;
+  --md-surface: color-mix(in srgb, var(--accent) 3%, var(--md-surface-base));
+  --md-surface-container-low: color-mix(in srgb, var(--accent) 5%, #f7f2fa);
+  --md-surface-container: color-mix(in srgb, var(--accent) 6%, #f3edf7);
+  --md-surface-container-high: color-mix(in srgb, var(--accent) 7%, #ece6f0);
+  --md-surface-container-highest: color-mix(in srgb, var(--accent) 8%, #e6e0e9);
+  --md-on-surface: #1d1b20;
+  --md-on-surface-variant: #49454f;
+  --md-outline: #79747e;
+  --md-outline-variant: #cac4d0;
+  --md-primary-container: color-mix(in srgb, var(--accent) 22%, #ffffff);
+  --md-on-primary-container: color-mix(in srgb, var(--accent) 70%, #000000);
+  --md-secondary-container: color-mix(in srgb, var(--accent) 14%, #f3edf7);
+  --md-error: #b3261e;
+  --md-inverse-surface: #322f35;
+  --md-inverse-on-surface: #f5eff7;
+  --state-hover: 0.08;
+  --state-press: 0.12;
+  --radius-s: 8px;
+  --radius-m: 12px;
+  --radius-l: 16px;
+  --radius-xl: 28px;
+  --elev-1: 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 3px 1px rgb(0 0 0 / 0.15);
+  --elev-2: 0 1px 2px rgb(0 0 0 / 0.3), 0 2px 6px 2px rgb(0 0 0 / 0.15);
+  --font: "Segoe UI Variable Text", "Segoe UI", Roboto, "Noto Sans", Ubuntu, Cantarell, system-ui, sans-serif;
+  --mono: "Cascadia Mono", Consolas, "DejaVu Sans Mono", "Ubuntu Mono", monospace;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --md-on-primary: #ffffff;
+  --md-surface-base: #141218;
+  --md-surface: color-mix(in srgb, var(--accent) 4%, var(--md-surface-base));
+  --md-surface-container-low: color-mix(in srgb, var(--accent) 5%, #1d1b20);
+  --md-surface-container: color-mix(in srgb, var(--accent) 6%, #211f26);
+  --md-surface-container-high: color-mix(in srgb, var(--accent) 7%, #2b2930);
+  --md-surface-container-highest: color-mix(in srgb, var(--accent) 8%, #36343b);
+  --md-on-surface: #e6e0e9;
+  --md-on-surface-variant: #cac4d0;
+  --md-outline: #938f99;
+  --md-outline-variant: #49454f;
+  --md-primary: color-mix(in srgb, var(--accent) 55%, #ffffff);
+  --md-on-primary: color-mix(in srgb, var(--accent) 60%, #000000);
+  --md-primary-container: color-mix(in srgb, var(--accent) 45%, #1d1b20);
+  --md-on-primary-container: color-mix(in srgb, var(--accent) 20%, #ffffff);
+  --md-secondary-container: color-mix(in srgb, var(--accent) 22%, #2b2930);
+  --md-error: #f2b8b5;
+  --md-inverse-surface: #e6e0e9;
+  --md-inverse-on-surface: #322f35;
+}
+
+* { box-sizing: border-box; }
+/* Components set their own display; make the hidden attribute always win. */
+[hidden] { display: none !important; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+  font: 14px/1.4 var(--font);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  overflow: hidden;
+}
+
+button, input, select { font: inherit; color: inherit; }
+
+svg.icon { width: 20px; height: 20px; fill: currentColor; flex: none; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--md-on-surface) 22%, transparent);
+  border-radius: 10px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-track { background: transparent; }
+
+/* State layer helper */
+.stateful { position: relative; overflow: hidden; }
+.stateful::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 120ms;
+  pointer-events: none;
+  border-radius: inherit;
+}
+.stateful:hover::after { opacity: var(--state-hover); }
+.stateful:active::after { opacity: var(--state-press); }
+
+/* Icon button */
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--md-on-surface-variant);
+  cursor: pointer;
+  flex: none;
+}
+.icon-btn.small { width: 30px; height: 30px; }
+.icon-btn.small svg.icon { width: 18px; height: 18px; }
+.icon-btn.active { color: var(--md-primary); }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 24px;
+  border-radius: 20px;
+  border: 0;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn svg.icon { width: 18px; height: 18px; margin-left: -8px; }
+.btn.filled { background: var(--md-primary); color: var(--md-on-primary); }
+.btn.tonal { background: var(--md-secondary-container); color: var(--md-on-surface); }
+.btn.outlined { background: transparent; border: 1px solid var(--md-outline); color: var(--md-primary); }
+.btn.text { background: transparent; color: var(--md-primary); padding: 0 12px; }
+.btn.danger { color: var(--md-error); }
+.btn:disabled { opacity: 0.38; cursor: default; }
+
+/* Chips */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: var(--radius-s);
+  border: 1px solid var(--md-outline-variant);
+  background: transparent;
+  color: var(--md-on-surface-variant);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.chip.selected {
+  background: var(--md-secondary-container);
+  border-color: transparent;
+  color: var(--md-on-surface);
+}
+.chip .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+
+/* Switch */
+.switch { position: relative; display: inline-block; width: 52px; height: 32px; flex: none; }
+.switch input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; z-index: 1; }
+.switch .track {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: var(--md-surface-container-highest);
+  border: 2px solid var(--md-outline);
+  transition: background 150ms, border-color 150ms;
+}
+.switch .track::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--md-outline);
+  transform: translateY(-50%);
+  transition: all 150ms cubic-bezier(0.2, 0, 0, 1);
+}
+.switch input:checked + .track { background: var(--md-primary); border-color: var(--md-primary); }
+.switch input:checked + .track::after {
+  left: 22px;
+  width: 24px;
+  height: 24px;
+  background: var(--md-on-primary);
+}
+
+/* Segmented button */
+.segmented { display: inline-flex; border: 1px solid var(--md-outline); border-radius: 20px; overflow: hidden; }
+.segmented button {
+  height: 36px;
+  padding: 0 16px;
+  border: 0;
+  border-left: 1px solid var(--md-outline);
+  background: transparent;
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.segmented button:first-child { border-left: 0; }
+.segmented button.selected { background: var(--md-secondary-container); }
+.segmented button.selected::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+
+/* Text field */
+.field {
+  height: 40px;
+  padding: 0 12px;
+  border-radius: var(--radius-s) var(--radius-s) 0 0;
+  border: 0;
+  border-bottom: 1px solid var(--md-on-surface-variant);
+  background: var(--md-surface-container-highest);
+  outline: none;
+}
+.field:focus { border-bottom: 2px solid var(--md-primary); }
+
+/* Snackbar */
+.snackbar {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translate(-50%, 24px);
+  max-width: calc(100% - 32px);
+  padding: 12px 16px;
+  border-radius: 4px;
+  background: var(--md-inverse-surface);
+  color: var(--md-inverse-on-surface);
+  box-shadow: var(--elev-2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms, transform 200ms cubic-bezier(0.2, 0, 0, 1);
+  z-index: 100;
+}
+.snackbar.show { opacity: 1; transform: translate(-50%, 0); }

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Simple Clipboard – Settings</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/settings.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="app-bar">
+        <h1>Settings</h1>
+        <span class="version" id="version"></span>
+      </header>
+
+      <section class="card" id="general">
+        <h2><span data-icon="palette"></span>General</h2>
+        <div class="row">
+          <div class="text"><div class="title">Launch at startup</div><div class="sub">Start minimized in the tray when you sign in</div></div>
+          <label class="switch"><input type="checkbox" data-key="launch_at_startup" /><span class="track"></span></label>
+        </div>
+        <div class="row">
+          <div class="text"><div class="title">Paste automatically</div><div class="sub">Paste into the previous app after picking an item. Otherwise it is only copied.</div></div>
+          <label class="switch"><input type="checkbox" data-key="auto_paste" /><span class="track"></span></label>
+        </div>
+        <div class="row">
+          <div class="text"><div class="title">Remember popup position</div><div class="sub">Drag the popup by its top bar. When on, it reopens where you left it instead of at the mouse.</div></div>
+          <div class="gap-row">
+            <button class="btn text" id="reset-position" hidden>Reset</button>
+            <label class="switch"><input type="checkbox" data-key="remember_position" /><span class="track"></span></label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="text"><div class="title">Theme</div></div>
+          <div class="segmented" data-key="theme">
+            <button data-value="system">System</button><button data-value="light">Light</button><button data-value="dark">Dark</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="text"><div class="title">Accent color</div></div>
+          <div class="swatches" id="accent-swatches"></div>
+        </div>
+      </section>
+
+      <section class="card" id="shortcut">
+        <h2><span data-icon="keyboard"></span>Shortcut</h2>
+        <div class="row">
+          <div class="text">
+            <div class="title">Open clipboard</div>
+            <div class="sub" id="shortcut-note"></div>
+          </div>
+          <div class="hotkey">
+            <button class="btn outlined" id="hotkey-btn" title="Click and press a new shortcut"><span id="hotkey-label"></span></button>
+          </div>
+        </div>
+        <div class="row" id="win-v-row" hidden>
+          <div class="text"><div class="title">Replace Windows clipboard history</div><div class="sub">Use <kbd>Win</kbd> + <kbd>V</kbd> for Simple Clipboard instead of the built-in history</div></div>
+          <label class="switch"><input type="checkbox" id="win-v" /><span class="track"></span></label>
+        </div>
+        <div class="row" id="native-row" hidden>
+          <div class="text">
+            <div class="title">Windows clipboard shortcut</div>
+            <div class="sub" id="native-status"></div>
+          </div>
+          <div class="gap-row">
+            <button class="btn text" id="native-cancel" hidden>Cancel</button>
+            <button class="btn tonal" id="native-btn"></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="history">
+        <h2><span data-icon="history"></span>History</h2>
+        <div class="row">
+          <div class="text"><div class="title">Items to keep</div><div class="sub">Pinned items don't count towards this limit</div></div>
+          <div class="slider">
+            <input type="range" id="max-items-range" min="10" max="500" step="10" />
+            <input type="number" class="field num" id="max-items" min="1" max="1000" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="text"><div class="title">Save pictures</div><div class="sub">Keep copied images and screenshots in the history</div></div>
+          <label class="switch"><input type="checkbox" data-key="images_enabled" /><span class="track"></span></label>
+        </div>
+        <div class="row">
+          <div class="text"><div class="title">Clear history</div><div class="sub">Removes everything except pinned items</div></div>
+          <button class="btn outlined danger" id="clear-history" data-icon="sweep">Clear</button>
+        </div>
+      </section>
+
+      <section class="card" id="pinned">
+        <h2><span data-icon="pin"></span>Pinned items</h2>
+        <div class="row">
+          <div class="text"><div class="title">Pinned palette</div><div class="sub">Show pinned items in an extra column next to the history</div></div>
+          <label class="switch"><input type="checkbox" data-key="pinned_enabled" /><span class="track"></span></label>
+        </div>
+        <div class="row" data-requires="pinned_enabled">
+          <div class="text"><div class="title">Palette position</div></div>
+          <div class="segmented" data-key="pinned_side">
+            <button data-value="left">Left</button><button data-value="right">Right</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="tags" data-requires="pinned_enabled">
+        <h2><span data-icon="label"></span>Tags</h2>
+        <p class="hint">Tags group pinned items. Click a dot to change its color.</p>
+        <ul class="tags" id="tag-list"></ul>
+        <div class="row end">
+          <button class="btn tonal" id="add-tag" data-icon="add">Add tag</button>
+        </div>
+      </section>
+
+      <section class="card" id="backup">
+        <h2><span data-icon="save"></span>Backup</h2>
+        <p class="hint">Exports settings, tags and pinned text items to a JSON file.</p>
+        <div class="row end gap">
+          <button class="btn outlined" id="import" data-icon="upload">Import</button>
+          <button class="btn filled" id="export" data-icon="download">Export</button>
+        </div>
+      </section>
+
+      <section class="card" id="updates">
+        <h2><span data-icon="update"></span>Updates</h2>
+        <div class="row">
+          <div class="text"><div class="title">Check for updates on startup</div></div>
+          <label class="switch"><input type="checkbox" data-key="check_updates" /><span class="track"></span></label>
+        </div>
+        <div class="row">
+          <div class="text"><div class="title" id="update-title">Simple Clipboard</div><div class="sub" id="update-status">Not checked yet</div></div>
+          <div class="gap-row">
+            <button class="btn filled" id="open-release" hidden data-icon="open">Download</button>
+            <button class="btn tonal" id="check-updates" data-icon="update">Check now</button>
+          </div>
+        </div>
+        <p class="hint"><a href="#" id="repo-link">github.com/NUCL3ARN30N/simple-clipboard</a></p>
+      </section>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/settings.js"></script>
+  </body>
+</html>

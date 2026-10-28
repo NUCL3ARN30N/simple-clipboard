@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Simple Clipboard</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/popup.css" />
+  </head>
+  <body>
+    <div class="app" id="app">
+      <section class="panel history" id="history-panel">
+        <div class="drag-handle" data-tauri-drag-region title="Drag to move"></div>
+        <header class="topbar" data-tauri-drag-region>
+          <label class="search">
+            <span data-icon="search"></span>
+            <input id="search" type="text" placeholder="Search clipboard" autocomplete="off" spellcheck="false" />
+            <button class="icon-btn small stateful" id="clear-search" title="Clear search" hidden data-icon="close"></button>
+          </label>
+          <button class="icon-btn stateful" id="clear-all" title="Clear history (keeps pinned)" data-icon="sweep"></button>
+          <button class="icon-btn stateful" id="open-settings" title="Settings" data-icon="settings"></button>
+        </header>
+        <div class="section-title" data-tauri-drag-region>
+          <span>Clipboard history</span>
+          <span id="history-count"></span>
+        </div>
+        <ul class="list" id="history-list"></ul>
+        <div class="empty" id="history-empty" hidden>
+          <span data-icon="paste"></span>
+          <p id="history-empty-text">Copy something and it will show up here.</p>
+        </div>
+        <footer class="hints">
+          <span><kbd>↑</kbd><kbd>↓</kbd> select</span>
+          <span><kbd>Enter</kbd> paste</span>
+          <span class="pin-hint"><kbd>Ctrl</kbd><kbd>P</kbd> pin</span>
+          <span class="pin-hint"><kbd>Tab</kbd> switch</span>
+          <span><kbd>Del</kbd> remove</span>
+        </footer>
+      </section>
+
+      <aside class="panel pinned" id="pinned-panel">
+        <div class="drag-handle" data-tauri-drag-region title="Drag to move"></div>
+        <header class="pinned-head" data-tauri-drag-region>
+          <span data-icon="pin"></span>
+          <span>Pinned</span>
+          <span class="spacer"></span>
+          <button class="icon-btn small stateful" id="manage-tags" title="Manage tags" data-icon="label"></button>
+        </header>
+        <div class="tag-filter" id="tag-filter"></div>
+        <ul class="list" id="pinned-list"></ul>
+        <div class="empty" id="pinned-empty" hidden>
+          <span data-icon="pin"></span>
+          <p>Pin items you paste often. They are kept forever.</p>
+        </div>
+      </aside>
+    </div>
+
+    <div class="menu" id="tag-menu" hidden></div>
+
+    <script src="js/common.js"></script>
+    <script src="js/popup.js"></script>
+  </body>
+</html>
