@@ -5,6 +5,7 @@ description = "A fast, Material Design clipboard manager"
 authors = ["NUCL3ARN30N"]
 repository = "https://github.com/NUCL3ARN30N/simple-clipboard"
 edition = "2021"
+license = "GPL-3.0-only"
 
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
