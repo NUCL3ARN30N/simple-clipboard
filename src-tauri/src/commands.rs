@@ -266,6 +266,10 @@ pub fn sync_autostart(app: &AppHandle, enabled: bool) {
             eprintln!("autostart: {e}");
         }
     }
+    #[cfg(windows)]
+    if enabled {
+        platform::fix_autostart_entry(&app.package_info().name);
+    }
 }
 
 #[derive(Serialize, Deserialize)]

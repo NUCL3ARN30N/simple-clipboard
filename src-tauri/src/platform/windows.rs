@@ -165,7 +165,27 @@ pub fn clipboard_excluded() -> bool {
     formats.iter().any(|&f| unsafe { IsClipboardFormatAvailable(f) != 0 })
 }
 
-const ADVANCED_KEY: &str = r"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced";
+const RUN_KEY: &str = r"Software\Microsoft\Windows\CurrentVersion\Run";
+
+/// Rewrites our autostart entry to the quoted path of the running exe. The autostart plugin
+/// writes the path unquoted, which Windows cannot launch when it contains spaces
+/// (`C:\Program Files\...`), and never updates it after the exe moved.
+pub fn fix_autostart_entry(name: &str) {
+    let Ok(exe) = std::env::current_exe() else { return };
+    let hkcu = winreg::RegKey::predef(winreg::enums::HKEY_CURRENT_USER);
+    let Ok(key) = hkcu.open_subkey_with_flags(RUN_KEY, winreg::enums::KEY_READ | winreg::enums::KEY_WRITE) else {
+        return;
+    };
+    let Ok(current) = key.get_value::<String, _>(name) else { return };
+    let wanted = format!("\"{}\"", exe.display());
+    if current != wanted {
+        if let Err(e) = key.set_value(name, &wanted) {
+            eprintln!("autostart: {e}");
+        }
+    }
+}
+
+const ADVANCED_KEY: &str =r"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced";
 const DISABLED_HOTKEYS: &str = "DisabledHotkeys";
 
 /// True when Explorer's own Win+V (clipboard history) is switched off via `DisabledHotkeys`.
